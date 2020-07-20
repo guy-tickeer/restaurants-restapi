@@ -1,4 +1,4 @@
-package com.example.demo.DataStorage;
+package com.example.demo.DataAccessLayer;
 
 import com.example.demo.models.Restaurant;
 import org.springframework.stereotype.Component;
@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class RestaurantsStorage {
+public class RestaurantsDAL {
+
     private Map<String,Restaurant> restaurants;
 
-
-    public RestaurantsStorage() {
+    public RestaurantsDAL() {
         this.restaurants = new HashMap<>();
     }
 

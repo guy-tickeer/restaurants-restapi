@@ -21,14 +21,14 @@ import java.util.Map;
 public class RestaurantsController {
 
     @Autowired
-    private RestaurantsService restaurantsService;
+    private RestaurantsService _restaurantsService;
 
-    @PostMapping({"","/"})
-    public ResponseEntity<Map<String, String>> createOrUpdate(@Valid @RequestBody Restaurant restaurant, Errors errors){
-        if(errors.hasErrors()){
+    @PostMapping({"", "/"})
+    public ResponseEntity<Map<String, String>> createOrUpdate(@Valid @RequestBody Restaurant restaurant, Errors errors) {
+        if (errors.hasErrors()) {
             return new ResponseEntity(ValidationErrorsHandler.mapErrors(errors), HttpStatus.BAD_REQUEST);
         }
-        String action=restaurantsService.createOrUpdate(restaurant);
+        String action = _restaurantsService.createOrUpdate(restaurant);
         return ResponseEntity.ok(Map.of("action", action));
     }
 

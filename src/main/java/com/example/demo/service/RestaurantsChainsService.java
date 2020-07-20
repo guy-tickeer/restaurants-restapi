@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 
-import com.example.demo.DataStorage.MyDataStorage;
+import com.example.demo.DataAccessLayer.RestaurantsChainsDAL;
 import com.example.demo.models.Restaurant;
 import com.example.demo.models.RestaurantsChain;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +14,17 @@ import java.util.List;
 public class RestaurantsChainsService {
 
     @Autowired
-    private MyDataStorage myDataStorage;
+    private RestaurantsChainsDAL _restaurantsChainsDAL;
 
     public List<RestaurantsChain> createOrUpdate(String restaurantName) {
         List<RestaurantsChain> chainsInChange = new LinkedList<>();
-        Restaurant restaurant = myDataStorage.getRestaurantByName(restaurantName);
-        RestaurantsChain chainIncludeRestaurant = myDataStorage.getChainByRestaurant(restaurant);
+        Restaurant restaurant = _restaurantsChainsDAL.get_restaurantsDAL().getByName(restaurantName);
+        RestaurantsChain chainIncludeRestaurant = _restaurantsChainsDAL.getByRestaurant(restaurant);
 
 
         if (restaurant.isIs_deleted()) {
             if (chainIncludeRestaurant != null) {
-                myDataStorage.removeRestaurantFromChain(restaurant, chainIncludeRestaurant);
+                _restaurantsChainsDAL.removeRestaurantFromChain(restaurant, chainIncludeRestaurant);
                 chainsInChange.add(chainIncludeRestaurant);
                 return chainsInChange;
             }
@@ -32,18 +32,18 @@ public class RestaurantsChainsService {
         }
 
         if (chainIncludeRestaurant == null) {
-            chainsInChange.add(myDataStorage.addRestaurantToChain(restaurant));
+            chainsInChange.add(_restaurantsChainsDAL.addRestaurantToChain(restaurant));
             return chainsInChange;
         }
 
         if (!chainIncludeRestaurant.getOwner().equals(restaurant.getOwner_name())){
-            myDataStorage.removeRestaurantFromChain(restaurant, chainIncludeRestaurant);
+            _restaurantsChainsDAL.removeRestaurantFromChain(restaurant, chainIncludeRestaurant);
             chainsInChange.add(chainIncludeRestaurant);
-            chainsInChange.add(myDataStorage.addRestaurantToChain(restaurant));
+            chainsInChange.add(_restaurantsChainsDAL.addRestaurantToChain(restaurant));
             return chainsInChange;
         }
         if(chainIncludeRestaurant.getOwner().equals(restaurant.getOwner_name())){
-            myDataStorage.updateRestaurantInExistingChain(restaurant,chainIncludeRestaurant);
+            _restaurantsChainsDAL.updateRestaurantInChain(restaurant,chainIncludeRestaurant);
             chainsInChange.add(chainIncludeRestaurant);
             return chainsInChange;
         }
@@ -51,6 +51,6 @@ public class RestaurantsChainsService {
     }
 
     public boolean isRestaurantExist(String restaurantName) {
-        return myDataStorage.isRestaurantExists(restaurantName);
+        return _restaurantsChainsDAL.get_restaurantsDAL().contains(restaurantName);
     }
 }

@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.util.*;
 
 public class RestaurantsChain implements Serializable {
-    String id;
-    String timestamp;
-    String owner;
-    double rating;
-    boolean is_deleted;
-    List<String> restaurants;
-    Map<String ,Double> ratings;
+    private String id;
+    private String timestamp;
+    private String owner;
+    private double rating;
+    private boolean is_deleted;
+    private List<String> restaurants;
+    private Map<String, Double> ratings;
 
 
     public RestaurantsChain(String owner, double rating, String firstRestaurant) {
-        this.ratings=new HashMap<>();
+        this.ratings = new HashMap<>();
         this.id = UUID.randomUUID().toString();
         this.timestamp = DateConverter.dateToString(new Date());
         this.owner = owner;
@@ -22,6 +22,7 @@ public class RestaurantsChain implements Serializable {
         this.is_deleted = false;
         this.restaurants = new LinkedList<>();
         this.restaurants.add(firstRestaurant);
+        this.ratings.put(firstRestaurant,rating);
     }
 
     public String getId() {
@@ -81,16 +82,21 @@ public class RestaurantsChain implements Serializable {
 
     public void addRestaurant(Restaurant restaurant) {
         restaurants.add(restaurant.getRestaurant_name());
-        ratings.put(restaurant.getRestaurant_name(),restaurant.getRating());
+        ratings.put(restaurant.getRestaurant_name(), restaurant.getRating());
         calcRating();
         updateTimeStamp();
     }
-    public void calcRating(){
-        double sum=0;
-        for(double val:ratings.values()){
-            sum+=val;
+
+    public void calcRating() {
+        if (ratings.isEmpty()) {
+            setRating(0);
+        } else {
+            double sum = 0;
+            for (double val : ratings.values()) {
+                sum += val;
+            }
+            setRating(sum / ratings.size());
         }
-        setRating(sum/ratings.size());
     }
 
     public boolean contains(Restaurant restaurant) {

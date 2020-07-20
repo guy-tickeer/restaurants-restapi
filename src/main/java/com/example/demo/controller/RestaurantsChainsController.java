@@ -18,16 +18,16 @@ import java.util.Map;
 public class RestaurantsChainsController {
 
     @Autowired
-    private RestaurantsChainsService restaurantsChainsService;
+    private RestaurantsChainsService _restaurantsChainsService;
 
 
     @GetMapping({"", "/"})
     public ResponseEntity<Map<String, Object>> createOrUpdate(@RequestParam String restaurantName) {
-        String restaurantNameClear=restaurantName.replaceAll("\\\"|”","");
-        if (!restaurantsChainsService.isRestaurantExist(restaurantNameClear)) {
+        String restaurantNameClear=restaurantName.replaceAll("[\"”]","");
+        if (!_restaurantsChainsService.isRestaurantExist(restaurantNameClear)) {
             return ResponseEntity.badRequest().body(Map.of("error", "restaurant does not exist"));
         }
-        List<RestaurantsChain> restaurantsChains = restaurantsChainsService.createOrUpdate(restaurantNameClear);
+        List<RestaurantsChain> restaurantsChains = _restaurantsChainsService.createOrUpdate(restaurantNameClear);
         if(restaurantsChains==null){
             return ResponseEntity.ok(Map.of("error", "trying to delete restaurant not existing in chain"));
         }

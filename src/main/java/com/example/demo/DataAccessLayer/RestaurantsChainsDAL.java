@@ -1,7 +1,8 @@
-package com.example.demo.DataStorage;
+package com.example.demo.DataAccessLayer;
 
 import com.example.demo.models.Restaurant;
 import com.example.demo.models.RestaurantsChain;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -9,11 +10,17 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Component
-public class RestaurantsChainsStorage {
+public class RestaurantsChainsDAL {
+    @Autowired
+    private RestaurantsDAL _restaurantsDAL;
     private Map<String, RestaurantsChain> restaurantsChains;
 
-    public RestaurantsChainsStorage() {
+    public RestaurantsChainsDAL() {
         restaurantsChains = new HashMap<>();
+    }
+
+    public RestaurantsDAL get_restaurantsDAL() {
+        return _restaurantsDAL;
     }
 
 
@@ -33,7 +40,6 @@ public class RestaurantsChainsStorage {
             }
         }
         return null;
-
     }
 
     public RestaurantsChain createChain(Restaurant restaurant) {
@@ -46,12 +52,13 @@ public class RestaurantsChainsStorage {
         chain.removeRestaurant(restaurant);
     }
 
-    public void addRestaurantToChain(Restaurant restaurant, RestaurantsChain chain) {
-        chain.addRestaurant(restaurant);
-    }
-
-    public boolean isRestaurantInChain(Restaurant restaurant, RestaurantsChain chain) {
-        return chain.contains(restaurant);
+    public RestaurantsChain addRestaurantToChain(Restaurant restaurant) {
+        RestaurantsChain chainToUpdate = getByOwner(restaurant.getOwner_name());
+        if (chainToUpdate == null) {
+            return this.createChain(restaurant);
+        }
+        chainToUpdate.addRestaurant(restaurant);
+        return chainToUpdate;
     }
 
     public void updateRestaurantInChain(Restaurant restaurant, RestaurantsChain chain) {
